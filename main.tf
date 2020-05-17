@@ -73,16 +73,16 @@ module "swap" {
   connections = module.provider.public_ips
 }
 
-module "dns" {
-  source = "./dns/cloudflare"
+# module "dns" {
+#   source = "./dns/cloudflare"
 
-  node_count = var.node_count
-  email      = var.cloudflare_email
-  api_token  = var.cloudflare_api_token
-  domain     = var.domain
-  public_ips = module.provider.public_ips
-  hostnames  = module.provider.hostnames
-}
+#   node_count = var.node_count
+#   email      = var.cloudflare_email
+#   api_token  = var.cloudflare_api_token
+#   domain     = var.domain
+#   public_ips = module.provider.public_ips
+#   hostnames  = module.provider.hostnames
+# }
 
 # module "dns" {
 #   source = "./dns/aws"
@@ -109,15 +109,15 @@ module "dns" {
 #   hostnames    = module.provider.hostnames
 # }
 
-# module "dns" {
-#   source     = "./dns/digitalocean"
-#
-#   node_count = var.node_count
-#   token      = var.digitalocean_token
-#   domain     = var.domain
-#   public_ips = module.provider.public_ips
-#   hostnames  = module.provider.hostnames
-# }
+module "dns" {
+  source     = "./dns/digitalocean"
+
+  node_count      = var.node_count
+  token      = var.digitalocean_token
+  domain     = var.domain
+  public_ips = module.provider.public_ips
+  hostnames  = module.provider.hostnames
+}
 
 module "wireguard" {
   source = "./security/wireguard"
