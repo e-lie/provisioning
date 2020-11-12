@@ -14,7 +14,6 @@ HEREDOC
 
 _setup_full() {
   _setup_terraform
-  _setup_ansible
 }
 
 _setup_terraform() {
