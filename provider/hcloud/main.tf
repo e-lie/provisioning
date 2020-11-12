@@ -75,6 +75,22 @@ resource "hcloud_floating_ip_assignment" "main" {
   server_id = hcloud_server.host.0.id
 }
 
+resource "null_resource" "ip_addr_add" {
+  count = var.floating_ip_count
+
+  connection {
+    host  = hcloud_server.host.0.ipv4_address
+    user  = "root"
+    agent = true
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "ip addr add ${element(hcloud_floating_ip.floating_ip.*.ip_address, count.index)} dev eth0",
+    ]
+  }
+}
+
 # resource "hcloud_volume" "volume" {
 #   name      = format(var.hostname_format, count.index + 1)
 #   size      = 10
