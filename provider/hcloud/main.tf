@@ -24,6 +24,11 @@ variable "ssh_keys" {
   type = list
 }
 
+variable "floating_ip_count" {
+  type = number
+  default = 0
+}
+
 provider "hcloud" {
   token = var.token
 }
@@ -58,6 +63,18 @@ resource "hcloud_server" "host" {
   }
 }
 
+resource "hcloud_floating_ip" "floating_ip" {
+  count = var.floating_ip_count
+  type = "ipv4"
+  home_location = var.location
+}
+
+resource "hcloud_floating_ip_assignment" "main" {
+  count = var.floating_ip_count
+  floating_ip_id = element(hcloud_floating_ip.floating_ip.*.id, count.index)
+  server_id = hcloud_server.host.0.id
+}
+
 # resource "hcloud_volume" "volume" {
 #   name      = format(var.hostname_format, count.index + 1)
 #   size      = 10
@@ -77,6 +94,10 @@ output "public_ips" {
 
 output "private_ips" {
   value = "${hcloud_server.host.*.ipv4_address}"
+}
+
+output "floating_ips" {
+  value = "${hcloud_floating_ip.floating_ip.*.ip_address}"
 }
 
 output "private_network_interface" {

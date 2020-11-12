@@ -16,6 +16,10 @@ variable "hostname_format" {
   default = "kube%d"
 }
 
+variable "floating_ip_count" {
+  default = 0
+}
+
 /* hcloud */
 variable "hcloud_token" {
   default = ""

@@ -8,6 +8,7 @@ module "provider" {
   image           = var.hcloud_image
   hosts           = var.node_count
   hostname_format = var.hostname_format
+  floating_ip_count = var.floating_ip_count
 }
 
 # module "provider" {
