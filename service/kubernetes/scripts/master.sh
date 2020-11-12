@@ -14,7 +14,8 @@ until nc -z localhost 6443; do
   sleep 5
 done
 
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+# Add some config NO_MASQ_LOCAL=0 to use with metallb : https://metallb.universe.tf/configuration/weave/ 
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.NO_MASQ_LOCAL=0"
 
 # See: https://kubernetes.io/docs/admin/authorization/rbac/
 kubectl create clusterrolebinding permissive-binding \
