@@ -8,3 +8,9 @@ override.tf.json
 *_override.tf.json
 
 env_secrets
+
+
+## Ansible
+
+geerlingguy.*
+*.retry

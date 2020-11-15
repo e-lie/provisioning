@@ -161,3 +161,16 @@ module "kubernetes" {
   vpn_ips        = module.wireguard.vpn_ips
   etcd_endpoints = module.etcd.endpoints
 }
+
+
+module "inventory-ansible-tf" {
+  source = "./inventory-ansible-tf"
+
+  node_count     = var.node_count
+  public_ips    = module.provider.public_ips
+  floating_ips   = module.provider.floating_ips
+  domains        = module.dns.domains
+  # vpn_interface  = module.wireguard.vpn_interface
+  # vpn_ips        = module.wireguard.vpn_ips
+  # etcd_endpoints = module.etcd.endpoints
+}

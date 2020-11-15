@@ -1,0 +1,3 @@
+- import_playbook: playbooks/python_k8s_modules.yml
+- import_playbook: playbooks/metallb_setup.yml
+- import_playbook: playbooks/rook_ceph_setup.yml

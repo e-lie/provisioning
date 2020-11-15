@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: rook-block
+provisioner: rook.rbd.csi.ceph.com
+parameters:
+  pool: {{ rook_ceph_pool_name }}
+  clusterID: {{ rook_ceph_namespace }}
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: {{ rook_ceph_namespace }}
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: {{ rook_ceph_namespace }}
+reclaimPolicy: Delete

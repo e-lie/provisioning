@@ -1,7 +1,4 @@
 
-export PROJECT_DIR=$(pwd)
-export TERRAFORM_DIR=$PROJECT_DIR
-
 export TF_VAR_hcloud_ssh_keys='["lenox-main"]'
 export TF_VAR_hcloud_location="nbg1"
 export TF_VAR_hcloud_type="cx31"

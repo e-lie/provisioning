@@ -1,0 +1,5 @@
+rook_ceph_namespace: rook-ceph
+rook_ceph_state: present
+rook_ceph_storage_path: /storage/data
+
+rook_ceph_pool_name: replicapool

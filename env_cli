@@ -1,0 +1,10 @@
+
+export PROJECT_DIR=$(pwd)
+export TERRAFORM_DIR=$PROJECT_DIR
+export ANSIBLE_DIR=$PROJECT_DIR/ansible-k8s/
+export ANSIBLE_INVENTORY=$PROJECT_DIR/ansible-k8s/terraform-inventory.py
+export ANSIBLE_PLAYBOOK=$PROJECT_DIR/ansible-k8s/site.yml
+export ANSIBLE_TF_DIR=$TERRAFORM_DIR
+
+# export kubeconfig context to use with ansible k8s module
+export K8S_AUTH_CONTEXT=dopl.uk

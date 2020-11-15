@@ -1,0 +1,21 @@
+
+- name: Ensure Rook Ceph cluster {{ rook_ceph_state }}
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'cluster.yaml.j2') }}"
+    namespace: "{{ rook_ceph_namespace }}"
+    state: "{{ rook_ceph_state }}"
+    wait: yes
+
+- name: Ensure Rook Ceph operator {{ rook_ceph_state }}
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'operator.yaml.j2') }}"
+    namespace: "{{ rook_ceph_namespace }}"
+    state: "{{ rook_ceph_state }}"
+    wait: yes
+
+- name: Ensure {{ rook_ceph_namespace }} namespace {{ rook_ceph_state }}
+  community.kubernetes.k8s:
+    name: "{{ rook_ceph_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: "{{ rook_ceph_state }}"

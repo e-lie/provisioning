@@ -1,0 +1,25 @@
+- name: Ensure {{ metallb_namespace }} namespace exists
+  community.kubernetes.k8s:
+    name: "{{ metallb_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: "{{ metallb_state }}"
+
+- name: Ensure MetalLB ConfigMap exists
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'configmap.yaml.j2') }}"
+    namespace: "{{ metallb_namespace }}"
+    state: "{{ metallb_state }}"
+  # tags: [postgres, configmap, postgres_configmap]
+
+- name: Ensure MetalLB Secret exists
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'secret.yaml.j2') }}"
+    namespace: "{{ metallb_namespace }}"
+    state: "{{ metallb_state }}"
+
+- name: Ensure MetalLB deployment exists
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'metallb.yaml.j2') }}"
+    namespace: "{{ metallb_namespace }}"
+    state: "{{ metallb_state }}"

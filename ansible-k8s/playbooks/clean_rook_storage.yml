@@ -1,0 +1,10 @@
+- name: Clean rook OSD storage path 
+  hosts: kube_nodes
+  become: true
+
+  tasks:
+    - name: Remove rook ceph storage dir
+      file:
+        path: /storage
+        state: absent
+      

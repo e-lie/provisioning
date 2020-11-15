@@ -14,6 +14,7 @@ HEREDOC
 
 _setup_full() {
   _setup_terraform
+  _setup_ansible
 }
 
 _setup_terraform() {
@@ -23,6 +24,15 @@ _setup_terraform() {
   terraform init
   terraform plan
   terraform apply -auto-approve 
+  cd "$PROJECT_DIR"
+}
+
+_setup_ansible() {
+  printf "Setup infra VPS using Ansible\\n"
+  printf "##############################################\\n"
+  cd "$ANSIBLE_DIR"
+  # ansible-galaxy install -i -r roles/requirements.yml -p roles
+  ansible-playbook -i ${ANSIBLE_INVENTORY} ${ANSIBLE_PLAYBOOK} 
   cd "$PROJECT_DIR"
 }
 
@@ -43,6 +53,7 @@ _recreate_infra() {
 _main() {
   source ./env_secrets
   source ./env_cluster_params
+  source ./env_cli
 
   if [[ "${1:-}" =~ ^-h|--help$  ]]
   then

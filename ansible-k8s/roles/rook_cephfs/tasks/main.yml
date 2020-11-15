@@ -1,0 +1,11 @@
+- name: Ensure Rook CephFilesystem is {{ rook_cephfs_state }}
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'filesystem-noreplication.yaml.j2') }}"
+    state: "{{ rook_cephfs_state }}"
+    wait: yes
+
+- name: Ensure Rook CephFS StorageClass is {{ rook_cephfs_state }}
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'storageclass.yaml.j2') }}"
+    state: "{{ rook_cephfs_state }}"
+    wait: yes
