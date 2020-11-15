@@ -22,17 +22,20 @@
   wait_for:
     timeout: 60
 
-- name: Ensure Rook Ceph Block Pool is {{ rook_ceph_state }}
-  community.kubernetes.k8s:
-    definition: "{{ lookup('template', 'ceph-block-pool.yaml.j2') }}"
-    state: "{{ rook_ceph_state }}"
-    wait: yes
 
-- name: Ensure Rook Ceph storageClass is {{ rook_ceph_state }}
-  community.kubernetes.k8s:
-    definition: "{{ lookup('template', 'storageclass.yaml.j2') }}"
-    state: "{{ rook_ceph_state }}"
-    wait: yes
+# TODO move following block storage declaration into a new role 
+
+# - name: Ensure Rook Ceph Block Pool is {{ rook_ceph_state }}
+#   community.kubernetes.k8s:
+#     definition: "{{ lookup('template', 'ceph-block-pool.yaml.j2') }}"
+#     state: "{{ rook_ceph_state }}"
+#     wait: yes
+
+# - name: Ensure Rook Ceph storageClass is {{ rook_ceph_state }}
+#   community.kubernetes.k8s:
+#     definition: "{{ lookup('template', 'storageclass.yaml.j2') }}"
+#     state: "{{ rook_ceph_state }}"
+#     wait: yes
 
 - name: Ensure Rook Ceph tools pod is {{ rook_ceph_state }}
   community.kubernetes.k8s:

@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  dashboards_provider.yml: |
+    apiVersion: 1
+    providers:
+    - disableDeletion: false
+      editable: false
+      folder: Kubernetes
+      name: kubernetes
+      options:
+        path: /opt/bitnami/grafana/conf/provisioning/dashboards/kubernetes
+      type: file
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: grafana-dashboards-configuration
+  name: grafana-dashboards-configuration-b7cab55
+  namespace: kubeprod

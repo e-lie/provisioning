@@ -1,0 +1,13 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations: {}
+  labels:
+    name: nginx-ingress-controller
+  name: nginx-ingress-controller
+  namespace: kubeprod
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      name: nginx-ingress-controller

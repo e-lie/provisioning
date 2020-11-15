@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations: {}
+  labels:
+    name: alertmanager
+  name: alertmanager
+  namespace: kubeprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: alertmanager
+  serviceName: alertmanager
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /alertmanager/metrics
+        prometheus.io/port: "9093"
+        prometheus.io/scrape: "true"
+      labels:
+        name: alertmanager
+    spec:
+      containers:
+      - args:
+        - --config.file=/opt/bitnami/alertmanager/conf/config.yml
+        - --storage.path=/opt/bitnami/alertmanager/data
+        - --web.external-url=http://prometheus.hosteaching.ovh/alertmanager
+        env: []
+        image: bitnami/alertmanager:0.21.0-debian-10-r4
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /alertmanager/-/healthy
+            port: 9093
+          initialDelaySeconds: 60
+        name: alertmanager
+        ports:
+        - containerPort: 9093
+          name: alertmanager
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /alertmanager/-/healthy
+            port: 9093
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          timeoutSeconds: 3
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /opt/bitnami/alertmanager/conf
+          name: config
+          readOnly: true
+        - mountPath: /opt/bitnami/alertmanager/data
+          name: storage
+      - args:
+        - --volume-dir=/config
+        - --webhook-method=POST
+        - --webhook-url=http://localhost:9093/alertmanager/-/reload
+        env: []
+        image: bitnami/configmap-reload:0.4.0-debian-10-r1
+        imagePullPolicy: IfNotPresent
+        name: configmap-reload
+        ports: []
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /config
+          name: config
+          readOnly: true
+      imagePullSecrets: []
+      initContainers: []
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          name: alertmanager
+        name: config
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        name: storage
+      name: storage
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: "rook-cephfs"
+      resources:
+        requests:
+          storage: 5Gi

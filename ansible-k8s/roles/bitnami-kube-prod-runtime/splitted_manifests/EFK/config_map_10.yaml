@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  fluentd.conf: |
+    # Include config files in the ./config.d directory
+    @include config.d/*.conf
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: fluentd-es
+  name: fluentd-es-30f242f
+  namespace: kubeprod

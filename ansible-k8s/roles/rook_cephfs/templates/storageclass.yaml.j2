@@ -13,7 +13,7 @@ parameters:
 
   # Ceph pool into which the volume shall be created
   # Required for provisionVolume: "true"
-  pool: {{ rook_cephfs_name }}-data0
+  pool: {{ rook_cephfs_pool_name }}
 
   # Root path of an existing CephFS volume
   # Required for provisionVolume: "false"

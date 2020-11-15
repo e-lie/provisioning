@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    name: kibana
+  name: kibana
+  namespace: kubeprod
+spec:
+  minReadySeconds: 30
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: kibana
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        name: kibana
+    spec:
+      containers:
+      - args: []
+        env:
+        - name: KIBANA_ELASTICSEARCH_URL
+          value: elasticsearch-logging.kubeprod.svc
+        - name: KIBANA_HOST
+          value: 0.0.0.0
+        - name: SERVER_BASEPATH
+          value: ""
+        - name: XPACK_MONITORING_ENABLED
+          value: "false"
+        - name: XPACK_SECURITY_ENABLED
+          value: "false"
+        image: bitnami/kibana:7.8.0-debian-10-r2
+        imagePullPolicy: IfNotPresent
+        name: kibana
+        ports:
+        - containerPort: 5601
+          name: ui
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 10m
+        securityContext:
+          runAsUser: 1001
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /opt/bitnami/kibana/plugins
+          name: plugins
+      imagePullSecrets: []
+      initContainers:
+      - args: []
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          rm -rf /opt/bitnami/kibana/plugins/lost+found
+          echo '' | sort > /tmp/wanted.list
+          /opt/bitnami/kibana/bin/kibana-plugin list | grep @ | sort > /tmp/installed.list
+          join -v2 -t, -j1 /tmp/wanted.list /tmp/installed.list | while read plugin; do
+            ${plugin:+/opt/bitnami/kibana/bin/kibana-plugin remove "${plugin%@*}"}
+          done
+          join -v1 -t, -j1 -o1.2 /tmp/wanted.list /tmp/installed.list | while read url; do
+            ${url:+/opt/bitnami/kibana/bin/kibana-plugin install --no-optimize "$url"}
+          done
+        env: []
+        image: bitnami/kibana:7.8.0-debian-10-r2
+        imagePullPolicy: IfNotPresent
+        name: kibana-plugins-install
+        ports: []
+        securityContext:
+          allowPrivilegeEscalation: false
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /opt/bitnami/kibana/plugins
+          name: plugins
+      securityContext:
+        fsGroup: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: plugins
+        persistentVolumeClaim:
+          claimName: kibana-plugins

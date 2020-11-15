@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    name: external-dns
+  name: external-dns
+  namespace: kubeprod
+spec:
+  minReadySeconds: 30
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: external-dns
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "7979"
+        prometheus.io/scrape: "true"
+      labels:
+        name: external-dns
+    spec:
+      containers:
+      - args:
+        - --domain-filter=hosteaching.ovh
+        - --log-level=warning
+        - --pdns-server=http://powerdns.kubeprod.svc:8081
+        - --provider=pdns
+        - --registry=txt
+        - --txt-owner-id=hosteaching.ovh
+        - --txt-prefix=_externaldns.
+        - --source=service
+        - --source=ingress
+        - --source=crd
+        env:
+        - name: EXTERNAL_DNS_PDNS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api_key
+              name: powerdns-77ede1a
+        image: bitnami/external-dns:0.7.1-debian-10-r32
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: metrics
+        name: external-dns
+        ports:
+        - containerPort: 7979
+          name: metrics
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: metrics
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      initContainers: []
+      serviceAccountName: external-dns
+      terminationGracePeriodSeconds: 30
+      volumes: []

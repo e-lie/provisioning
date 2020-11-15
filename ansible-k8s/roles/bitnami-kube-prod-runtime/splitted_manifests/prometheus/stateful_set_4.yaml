@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations: {}
+  labels:
+    name: prometheus
+  name: prometheus
+  namespace: kubeprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: prometheus
+  serviceName: prometheus
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9090"
+        prometheus.io/scrape: "true"
+      labels:
+        name: prometheus
+    spec:
+      containers:
+      - args:
+        - --config.file=/opt/bitnami/prometheus/conf/custom/prometheus.yml
+        - --storage.tsdb.retention.time=183d
+        - --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries
+        - --web.console.templates=/opt/bitnami/prometheus/conf/consoles
+        - --web.external-url=http://prometheus.hosteaching.ovh/
+        - --web.enable-lifecycle
+        env: []
+        image: bitnami/prometheus:2.19.2-debian-10-r1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: 1200
+          successThreshold: 1
+        name: prometheus
+        ports:
+        - containerPort: 9090
+          name: web
+        readinessProbe:
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: 5
+          successThreshold: 2
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        securityContext:
+          runAsUser: 1001
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /opt/bitnami/prometheus/conf/custom
+          name: config
+          readOnly: true
+        - mountPath: /opt/bitnami/prometheus/data
+          name: data
+      - args:
+        - --volume-dir=/config
+        - --webhook-method=POST
+        - --webhook-url=http://localhost:9090/-/reload
+        env: []
+        image: bitnami/configmap-reload:0.4.0-debian-10-r1
+        imagePullPolicy: IfNotPresent
+        name: configmap-reload
+        ports: []
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /config
+          name: config
+          readOnly: true
+      imagePullSecrets: []
+      initContainers: []
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: prometheus
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          name: prometheus
+        name: config
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        name: data
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: "rook-cephfs"
+      resources:
+        requests:
+          storage: 7905Mi

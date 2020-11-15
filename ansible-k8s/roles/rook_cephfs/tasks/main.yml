@@ -9,3 +9,37 @@
     definition: "{{ lookup('template', 'storageclass.yaml.j2') }}"
     state: "{{ rook_cephfs_state }}"
     wait: yes
+
+
+- name: Increase ceph pg_num for health_ok
+  community.kubernetes.k8s_exec:
+    namespace: "{{ rook_ceph_namespace }}"
+    pod: rook-tools
+    command: ceph osd pool set {{ rook_cephfs_pool_name }} pg_num 64
+  when: rook_ceph_state == 'present'
+  register: ceph_pg_num
+  tags: ["ceph_increase_pg_num"]
+
+- name: Increase ceph pg_num for health_ok
+  community.kubernetes.k8s_exec:
+    namespace: "{{ rook_ceph_namespace }}"
+    pod: rook-tools
+    command: ceph osd pool set {{ rook_cephfs_name }}-metadata pg_num 64
+  when: rook_ceph_state == 'present'
+  register: ceph_pg_num
+  tags: ["ceph_increase_pg_num"]
+
+- name: Check Ceph Status
+  community.kubernetes.k8s_exec:
+    namespace: "{{ rook_ceph_namespace }}"
+    pod: rook-tools
+    command: ceph status
+  when: rook_ceph_state == 'present'
+  register: ceph_status
+  tags: ["ceph_status"]
+
+- name: Display Ceph Status
+  debug:
+    msg: "{{ ceph_status.stdout }}"
+  when: rook_ceph_state == 'present'
+  tags: ["ceph_status"]

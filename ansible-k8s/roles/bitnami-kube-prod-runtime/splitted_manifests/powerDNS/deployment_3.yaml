@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    name: powerdns
+  name: powerdns
+  namespace: kubeprod
+spec:
+  minReadySeconds: 30
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: powerdns
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        name: powerdns
+    spec:
+      containers:
+      - args:
+        - --api-key=$(POWERDNS_API_KEY)
+        - --slave=yes
+        command:
+        - /scripts/powerdns.sh
+        env:
+        - name: POWERDNS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api_key
+              name: powerdns-77ede1a
+        image: psitrax/powerdns:v4.2.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: api
+        name: pdns
+        ports:
+        - containerPort: 8081
+          name: api
+          protocol: TCP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: api
+        securityContext:
+          runAsUser: 0
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /scripts
+          name: scripts
+          readOnly: true
+        - mountPath: /etc/pdns/pdns.conf
+          name: secret
+          readOnly: true
+          subPath: pdns.conf
+      imagePullSecrets: []
+      initContainers:
+      - args: []
+        command:
+        - /scripts/setup-db.sh
+        env:
+        - name: POWERDNS_DB_DATABASE
+          value: powerdns
+        - name: POWERDNS_DB_HOST
+          value: mariadb-galera.kubeprod.svc
+        - name: POWERDNS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db_password
+              name: powerdns-77ede1a
+        - name: POWERDNS_DB_PORT
+          value: "3306"
+        - name: POWERDNS_DB_ROOT_USER
+          value: root
+        - name: POWERDNS_DB_USER
+          value: powerdns
+        - name: POWERDNS_DN_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: root_password
+              name: mariadb-galera-dc69b99
+        image: bitnami/mariadb-galera:10.5.4-debian-10-r2
+        imagePullPolicy: IfNotPresent
+        name: setup-db
+        ports: []
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /schema/schema.sql
+          name: schema
+          readOnly: true
+          subPath: schema.sql
+        - mountPath: /scripts
+          name: scripts
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          name: powerdns-7560389
+        name: schema
+      - configMap:
+          defaultMode: 493
+          name: powerdns-sh-f727feb
+        name: scripts
+      - name: secret
+        secret:
+          secretName: powerdns-77ede1a

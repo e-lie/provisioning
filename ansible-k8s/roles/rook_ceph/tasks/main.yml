@@ -4,15 +4,6 @@
 - include_tasks: delete.yml
   when: rook_ceph_state == 'absent'
 
-- name: Increase ceph pg_num for health_ok
-  community.kubernetes.k8s_exec:
-    namespace: "{{ rook_ceph_namespace }}"
-    pod: rook-tools
-    command: ceph osd pool set replicapool pg_num 64
-  when: rook_ceph_state == 'present'
-  register: ceph_pg_num
-  tags: ["ceph_increase_pg_num"]
-
 - name: Check Ceph Status
   community.kubernetes.k8s_exec:
     namespace: "{{ rook_ceph_namespace }}"

@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  release: v1.6.1
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: release
+  name: release
+  namespace: kubeprod

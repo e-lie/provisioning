@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: cert-manager-clusterissuers
+  name: cert-manager-clusterissuers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-clusterissuers
+subjects:
+- kind: ServiceAccount
+  name: cert-manager
+  namespace: kubeprod
