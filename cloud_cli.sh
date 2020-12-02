@@ -53,10 +53,7 @@ _recreate_infra() {
 _main() {
   source ./env_secrets
   source ./env_cluster_params
-<<<<<<< HEAD
   source ./env_cli
-=======
->>>>>>> 2efc0a503dc4fcdc3419a1e6a256934f90c17cd9
 
   if [[ "${1:-}" =~ ^-h|--help$  ]]
   then
