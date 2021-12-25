@@ -82,7 +82,7 @@ variable "digitalocean_region" {
 }
 
 variable "digitalocean_size" {
-  default = "1gb"
+  default = "s-1vcpu-1gb"
 }
 
 variable "digitalocean_image" {
@@ -212,5 +212,31 @@ variable "vsphere_user" {
 
 variable "vsphere_password" {
   description = "vSphere Admin Password"
-  default = "YourSecretPassword"
+  default     = "YourSecretPassword"
+}
+
+/* upcloud */
+variable "upcloud_zone" {
+  default = "de-fra1"
+}
+
+variable "upcloud_plan" {
+  default = "1xCPU-2GB"
+}
+
+variable "upcloud_disk_template" {
+  default = "Ubuntu Server 20.04 LTS (Focal Fossa)"
+}
+
+variable "upcloud_ssh_keys" {
+  type    = list(string)
+  default = [""]
+}
+
+variable "upcloud_username" {
+  default = ""
+}
+
+variable "upcloud_password" {
+  default = ""
 }
