@@ -1,10 +1,10 @@
 
-export TF_VAR_hcloud_ssh_keys='["lenox-main"]'
+export TF_VAR_hcloud_ssh_keys='["id_stagiaire"]'
 export TF_VAR_hcloud_location="nbg1"
 export TF_VAR_hcloud_type="cx31"
 
 export TF_VAR_domain="dopl.uk"
 
-export TF_VAR_node_count=3
+export TF_VAR_node_count=4
 export TF_VAR_etcd_node_count=3
 export TF_VAR_floating_ip_count=3

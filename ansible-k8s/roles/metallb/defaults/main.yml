@@ -1,3 +1,0 @@
-metallb_namespace: metallb-system
-metallb_config_name: metallb-config
-metallb_state: present

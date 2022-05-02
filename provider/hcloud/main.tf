@@ -24,6 +24,8 @@ variable "ssh_keys" {
   type = list
 }
 
+variable "ssh_key" {}
+
 variable "floating_ip_count" {
   type = number
   default = 0
@@ -38,12 +40,17 @@ variable "apt_packages" {
   default = []
 }
 
+resource "hcloud_ssh_key" "id_stagiaire" {
+  name       = "K3S hcloud - Provisionning SSH key"
+  public_key = var.ssh_key
+}
+
 resource "hcloud_server" "host" {
   name        = format(var.hostname_format, count.index + 1)
   location    = var.location
   image       = var.image
   server_type = var.type
-  ssh_keys    = var.ssh_keys
+  ssh_keys = [hcloud_ssh_key.id_stagiaire.id]
 
   count = var.hosts
 

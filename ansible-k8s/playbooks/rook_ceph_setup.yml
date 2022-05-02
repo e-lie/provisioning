@@ -1,6 +1,0 @@
-- hosts: localhost
-  roles:
-    - name: rook_ceph
-      vars:
-        # rook_ceph_state: absent
-      tags: ["rook_ceph"]

@@ -3,6 +3,7 @@ module "provider" {
 
   token           = var.hcloud_token
   ssh_keys        = var.hcloud_ssh_keys
+  ssh_key         = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXHgv6fDeMM/zbqXpzdANeNbltG74+2Q1pBC9CXRc0M stagiaire-id"
   location        = var.hcloud_location
   type            = var.hcloud_type
   image           = var.hcloud_image
@@ -124,11 +125,12 @@ module "swap" {
 # }
 
 module "dns" {
-  source     = "./dns/digitalocean"
+  source     = "./dns/hcloud"
 
   node_count      = var.node_count
-  token      = var.digitalocean_token
+  token      = var.hcloud_dns_token
   domain     = var.domain
+  cluster_subdomain = var.cluster_subdomain
   public_ips = module.provider.public_ips
   hostnames  = module.provider.hostnames
 }
@@ -176,14 +178,18 @@ module "kubernetes" {
 }
 
 
-module "inventory-ansible-tf" {
-  source = "./inventory-ansible-tf"
+# module "helm-apps" {
+#   source = "./k8s-tf/helm-apps"
+# }
 
-  node_count     = var.node_count
-  public_ips    = module.provider.public_ips
-  floating_ips   = module.provider.floating_ips
-  domains        = module.dns.domains
-  # vpn_interface  = module.wireguard.vpn_interface
-  # vpn_ips        = module.wireguard.vpn_ips
-  # etcd_endpoints = module.etcd.endpoints
-}
+# module "inventory-ansible-tf" {
+#   source = "./inventory-ansible-tf"
+
+#   node_count     = var.node_count
+#   public_ips    = module.provider.public_ips
+#   floating_ips   = module.provider.floating_ips
+#   domains        = module.dns.domains
+#   # vpn_interface  = module.wireguard.vpn_interface
+#   # vpn_ips        = module.wireguard.vpn_ips
+#   # etcd_endpoints = module.etcd.endpoints
+# }

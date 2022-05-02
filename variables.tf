@@ -9,7 +9,11 @@ variable "etcd_node_count" {
 }
 
 variable "domain" {
-  default = "example.com"
+  default = "dopl.uk"
+}
+
+variable "cluster_subdomain" {
+  default = "k8slab"
 }
 
 variable "hostname_format" {
@@ -22,6 +26,10 @@ variable "floating_ip_count" {
 
 /* hcloud */
 variable "hcloud_token" {
+  default = ""
+}
+
+variable "hcloud_dns_token" {
   default = ""
 }
 

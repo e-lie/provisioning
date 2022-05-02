@@ -1,4 +1,0 @@
-rook_cephfs_namespace: rook-ceph
-rook_cephfs_name: cephfs
-rook_cephfs_pool_name: cephfs-data0
-rook_cephfs_state: present

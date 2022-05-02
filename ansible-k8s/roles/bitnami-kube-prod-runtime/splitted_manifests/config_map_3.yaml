@@ -1,9 +1,0 @@
-apiVersion: v1
-data: {}
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    name: tcp-services
-  name: tcp-services-67c1890
-  namespace: kubeprod
