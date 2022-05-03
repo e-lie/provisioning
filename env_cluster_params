@@ -7,4 +7,4 @@ export TF_VAR_domain="dopl.uk"
 
 export TF_VAR_node_count=4
 export TF_VAR_etcd_node_count=3
-export TF_VAR_floating_ip_count=3
+export TF_VAR_floating_ip_count=0
